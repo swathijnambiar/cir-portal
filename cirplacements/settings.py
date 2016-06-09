@@ -43,7 +43,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
-    'mail_templated'
+    'mail_templated',
+    'cirplacements'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -128,7 +129,7 @@ STATICFILES_DIRS = (MEDIA_ROOT,)
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'manage_staf'
+LOGIN_REDIRECT_URL = 'manage_staff'
 RECOVER_ONLY_ACTIVE_USERS = False
 ACCOUNT_ACTIVATION_DAYS = 2
 ANONYMOUS_USER_ID = -1

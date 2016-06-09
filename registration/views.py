@@ -67,6 +67,7 @@ class StudentRegistrationView( LoginRequiredMixin, FormView):
     success_url = '/register/cirstaff/success'
 
     def form_valid(self, form):
+        form.instance.aums_id = form.instance.aums_id.lower()
         form.save()
         return FormView.form_valid(self, form)
 
@@ -89,11 +90,11 @@ def handle_student_upload(request):
                 counter = counter+1
 
             return render_to_response('register/cirstaff/register_bulk_student_list.html',{'counter':counter },
-                                       context_instance=RequestContext(request))
+                                      context_instance=RequestContext(request))
         else :
-             return redirect(request.META['HTTP_REFERER'])
+            return redirect(request.META['HTTP_REFERER'])
     else:
-         return HttpResponseBadRequest()
+        return HttpResponseBadRequest()
 
 
 class StudentListView(LoginRequiredMixin,ListView):
@@ -105,13 +106,29 @@ class StudentListView(LoginRequiredMixin,ListView):
 
 class StudentListUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
-    form_class = StudentRegistrationForm
+    fields= student_fields
     template_name_suffix = '_update_form'
     success_url = '/register/cirstaff/success/'
 
     def get_object(self, queryset=None):
-        obj = Student.Objects.get(stud_id=self.kwargs['stud_id'])
+        obj = Student.Objects.get(aums_id=self.kwargs['aums_id'])
+        print
         if obj:
             return obj
         else:
             raise Http404("That doesnt exist.")
+
+
+class StudentFilterExternalView(ListView):
+    template_name = 'register/cirstaff/filter_external_list.html'
+
+
+    def get_queryset(self):
+        cgpa = self.request.GET.get('cgpa')
+        arrears = self.request.GET.get('arrear')
+        branch = self.request.GET.get('branch')
+        tenth = self.request.GET.get('tenth')
+        twelth = self.request.GET.get('twelth')
+
+        return Student.Objects.filter(cgpa__gte=cgpa, curr_arrears__lte=arrears, branch=branch, tenth_mark__gte=tenth,
+                                      twelth_mark__gte=twelth)
